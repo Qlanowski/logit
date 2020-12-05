@@ -1,4 +1,6 @@
 # %%
+import numpy as np
+from scipy.special import expit
 class LogisticRegression(object):
     """
     Logistic Regression Classifier
@@ -133,6 +135,8 @@ from sklearn.datasets import make_classification
 X, y = make_classification(n_samples=500, n_features=2, n_informative=2, n_redundant=0, n_repeated=0, n_classes=2,n_clusters_per_class=1)
 clf = LogisticRegression().fit(X, y)
 #%%
+import matplotlib.pyplot as plt
+import matplotlib.colors as cma
 def plot_decision_boundary(X, y, model):
     cMap = cma.ListedColormap(["#6b76e8", "#c775d1"])
     cMapa = cma.ListedColormap(["#c775d1", "#6b76e8"])
@@ -155,3 +159,7 @@ def plot_decision_boundary(X, y, model):
     plt.show()
 #%%
 plot_decision_boundary(X, y, clf)
+
+#%%
+import numpy as np
+# %%
