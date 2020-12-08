@@ -1,6 +1,20 @@
 # %%
 import numpy as np
 from scipy.special import expit
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+import pandas as pd
+
+class DataLoader(object):
+    def __init__(self, path):
+        self.df = pd.read_csv(path, quotechar='"', delimiter=",")
+        self.features = ['x', 'y']
+        self.target = ['cls']
+
+    def generate_test_train_datasets(self, test_size=0.25):
+        X_train, X_test, y_train, y_test = train_test_split(self.df[self.features], self.df[self.target], test_size=test_size, random_state=1)
+        return X_train.to_numpy(), X_test.to_numpy(), y_train.to_numpy().ravel(), y_test.to_numpy().ravel()
+
 class LogisticRegression(object):
     """
     Logistic Regression Classifier
@@ -51,6 +65,8 @@ class LogisticRegression(object):
         """
         self.theta = np.zeros(X.shape[1] + 1)
         X = np.concatenate((np.ones((X.shape[0], 1)), X), axis=1)
+        print(X.shape)
+        print(y.shape)
 
         for _ in range(self.max_iter):
             y_hat = self.__sigmoid(X @ self.theta)
@@ -130,10 +146,20 @@ class LogisticRegression(object):
             return params
         except:
             raise Exception('Fit the model first!')
+    def accuracy(self, y, y_hat):
+        return 1 - accuracy_score(y, y_hat)
 #%%
 from sklearn.datasets import make_classification
 X, y = make_classification(n_samples=500, n_features=2, n_informative=2, n_redundant=0, n_repeated=0, n_classes=2,n_clusters_per_class=1)
 clf = LogisticRegression().fit(X, y)
+print("Accuracy: " + str(clf.accuracy(y, clf.predict(X))))
+
+#%%
+dataLoader = DataLoader("./data/classificationData/data.simple.train.1000.csv")
+x_train, x_test, y_train, y_test = dataLoader.generate_test_train_datasets()
+clf = LogisticRegression().fit(x_train, y_train)
+print("Accuracy: " + str(clf.accuracy(y_test, clf.predict(x_test))))
+
 #%%
 import matplotlib.pyplot as plt
 import matplotlib.colors as cma
