@@ -148,19 +148,7 @@ class LogisticRegression(object):
             raise Exception('Fit the model first!')
     def accuracy(self, y, y_hat):
         return 1 - accuracy_score(y, y_hat)
-#%%
-from sklearn.datasets import make_classification
-X, y = make_classification(n_samples=500, n_features=2, n_informative=2, n_redundant=0, n_repeated=0, n_classes=2,n_clusters_per_class=1)
-clf = LogisticRegression().fit(X, y)
-print("Accuracy: " + str(clf.accuracy(y, clf.predict(X))))
 
-#%%
-dataLoader = DataLoader("./data/classificationData/data.simple.train.1000.csv")
-x_train, x_test, y_train, y_test = dataLoader.generate_test_train_datasets()
-clf = LogisticRegression().fit(x_train, y_train)
-print("Accuracy: " + str(clf.accuracy(y_test, clf.predict(x_test))))
-
-#%%
 import matplotlib.pyplot as plt
 import matplotlib.colors as cma
 def plot_decision_boundary(X, y, model):
@@ -184,8 +172,25 @@ def plot_decision_boundary(X, y, model):
     plt.ylim(yy.min(), yy.max())
     plt.show()
 #%%
-plot_decision_boundary(X, y, clf)
+from sklearn.datasets import make_classification
+X, y = make_classification(n_samples=500, n_features=2, n_informative=2, n_redundant=0, n_repeated=0, n_classes=2,n_clusters_per_class=1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
+
+clf_our_random = LogisticRegression().fit(X_train, y_train)
+print("Accuracy: " + str(clf_our_random.accuracy(y_test, clf_our_random.predict(X_test))))
+#plot_decision_boundary(X_test, y_test, clf_our_random)
+
+from sklearn.linear_model import LogisticRegression as sklr
+clf_sk_random = sklr(random_state=0).fit(X_train, y_train)
+print("Accuracy: " + str(clf_sk_random.score(X_test,y_test)))
+#plot_decision_boundary(X_test, y_test, clf_sk_random)
 
 #%%
-import numpy as np
-# %%
+dataLoader = DataLoader("./data/classificationData/data.simple.train.1000.csv")
+X_train, X_test, y_train, y_test = dataLoader.generate_test_train_datasets()
+
+clf_our_real = LogisticRegression().fit(X_train, y_train)
+print("Accuracy: " + str(clf_our_real.accuracy(y_test, clf_our_real.predict(X_test))))
+
+clf_sk_real = sklr(random_state=0).fit(X_train, y_train)
+print("Accuracy: " + str(clf_sk_real.score(X_test, y_test)))
