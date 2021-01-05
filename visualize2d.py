@@ -22,3 +22,22 @@ def plot_decision_boundary(X, y, model):
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.show()
+
+def plot_iter_cost(model):
+    plt.axis('on')
+    plt.plot(model.iterationsCosts)
+    plt.xlabel("Liczba iteracji")
+    plt.ylabel("Wartość funkcji kosztu")
+    plt.title(model.method)
+    plt.show()
+
+def plot_iter_cost_multiple(results):
+    plt.axis('on')
+    for key, value in results.items():
+        plt.plot(value)
+    plt.xlabel("Liczba iteracji")
+    plt.ylabel("Wartość funkcji kosztu")
+    plt.yscale("log")
+    plt.xscale("log")
+    plt.title("Porównanie")
+    plt.show()
