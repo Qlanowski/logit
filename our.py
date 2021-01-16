@@ -22,7 +22,7 @@ def time_convert(sec):
     print("Czas {0}:{1}:{2}".format(int(hours),int(mins),sec))
 
 class LogisticRegression(object):
-    def __init__(self, learning_rate=0.01, max_iter=50000, regularization='l2', C = 1, tolerance = 1e-12, method="SGD", options=None):
+    def __init__(self, learning_rate=0.01, max_iter=1000, regularization='l2', C = 1, tolerance = 1e-4, method="SGD", options=None):
         self.learning_rate  = learning_rate
         self.max_iter = max_iter
         self.regularization = regularization
@@ -38,7 +38,10 @@ class LogisticRegression(object):
 
     def fit(self, X, y):
         global start_time
-        self.theta = np.random.rand(X.shape[1])
+        if self.method =="CG":
+            self.theta = np.zeros(X.shape[1])#np.random.rand(X.shape[1])
+        else:
+            self.theta = np.random.uniform(low=-1, high=1, size=X.shape[1])#np.random.rand(X.shape[1])
         self.currentX = X
         self.currentY = y
 
@@ -65,7 +68,7 @@ class LogisticRegression(object):
         theta = self.theta
         for _ in range(self.max_iter):
             step = self.learning_rate * self.gradient(theta, X, y)
-            if np.all(abs(step) >= self.tolerance):
+            if np.any(abs(step) >= self.tolerance):
                 theta -= step
             else:
                 break
@@ -97,17 +100,26 @@ class LogisticRegression(object):
         return np.round(self.predict_proba(X))
 
     def h(self, z):
-        return 1 / (1 + np.exp(-z))
+        return expit(z)
+       
 
 # %% 
 def get_dataset(n_samples,n_features,SEED):
-    X, y = make_classification(n_samples=n_samples, n_features=n_features, n_informative=2, n_redundant=0, n_repeated=0, n_classes=2,n_clusters_per_class=1,class_sep=0.7,random_state=SEED)
+    n_informative = 2
+    n_repeated = 0
+    n_redundant = 0
+    if n_features > 2:
+        n_informative = int(n_features*0.8)
+        #n_repeated = int(n_features*0.01)
+        #n_redundant = int(n_features*0.05)
+        
+    X, y = make_classification(n_samples=n_samples, n_features=n_features, n_informative=n_informative, n_redundant=n_redundant, n_repeated=n_repeated, n_classes=2,n_clusters_per_class=1,class_sep=0.7,random_state=SEED)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=SEED)
     return X_train, X_test, y_train, y_test
 # %%
 from sklearn.datasets import make_classification
 
-datasets = [(1000, 2), (500, 1000), (1000, 500), (8000, 5000)]
+datasets = [(1000, 2), (10000, 10), (8000, 5000), (1000, 30000)]
 methods  = [ "SGD", "CG", "L-BFGS-B"]#"nelder-mead"
 
 for i, d in enumerate(datasets):
@@ -118,13 +130,13 @@ for i, d in enumerate(datasets):
     print(f"Rows: {d[0]}, Features: {d[1]}")
     for j, m in enumerate(methods):
         clf = LogisticRegression(method=m).fit(X_train, y_train)
-        print(f"Method: {m}, Rows: {d[0]}, Features: {d[1]}, Accuracy: " + str(accuracy_score(y_test, clf.predict(X_test))))
         if(i == 0 and j==0):
-            plot_decision_boundary(X_test, y_test, clf)
-        results[clf.method] = clf.iterationsCosts
-        resultsTime[clf.method] = clf.times
+            plot_decision_boundary(X_test, y_test, clf,path=f'charts/disp{d[0]}Features{d[1]}.png')
+        if m =="L-BFGS-B":
+            m = "L-BFGS"
+        results[m] = clf.iterationsCosts
+        resultsTime[m] = clf.times
+        print(f"Method: {m}, Rows: {d[0]}, Features: {d[1]}, Time: {clf.times[-1]}, Cost: {clf.iterationsCosts[-1]}, Accuracy: " + str(accuracy_score(y_test, clf.predict(X_test))))
 
-    iter_cost_plt = plot_iter_cost_multiple(results)
-    iter_cost_plt.savefig(f'charts/iter_cost_rows_{d[0]}_features_{d[1]}.svg')
-    iter_time_plt = plot_multiple_tuples(resultsTime, "Liczba iteracji", "Czas", "Czas/Liczba iteracji")
-    iter_time_plt.savefig(f'charts/iter_time_rows_{d[0]}_features_{d[1]}.svg')
+    plot_iter_cost_multiple(results, path=f'charts/iterCostRows{d[0]}Features{d[1]}.svg')
+    plot_multiple_tuples(resultsTime, "Liczba iteracji", "Czas", "Czas/Liczba iteracji",path=f'charts/iterTimeRows{d[0]}Features{d[1]}.svg')

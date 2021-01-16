@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors as cma
 import numpy as np
-def plot_decision_boundary(X, y, model):
+def plot_decision_boundary(X, y, model,path=None):
     cMap = cma.ListedColormap(["#e3a77d", "#adb1e0"])
     cMapa = cma.ListedColormap(["#d4732f", "#6b76e8"])
 
@@ -21,7 +21,12 @@ def plot_decision_boundary(X, y, model):
     plt.scatter(X[:, 0], X[:, 1], c=y, marker = "o", edgecolors='k', cmap=cMapa)
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
-    plt.show()
+    plt.tight_layout()
+    if path != None:
+        plt.savefig(path)
+    else:
+        plt.show()
+    plt.clf()
 
 def plot_iter_cost(model):
     plt.axis('on')
@@ -31,7 +36,7 @@ def plot_iter_cost(model):
     plt.title(model.method)
     plt.show()
 
-def plot_iter_cost_multiple(results):
+def plot_iter_cost_multiple(results, path=None):
     plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
@@ -42,8 +47,12 @@ def plot_iter_cost_multiple(results):
     plt.xscale("log")
     plt.title("Koszt/Liczba iteracji")
     plt.legend(results.keys())
-    plt.show()
-    return plt
+    plt.tight_layout()
+    if path != None:
+        plt.savefig(path)
+    else:
+        plt.show()
+    plt.clf()
 
 def plot_multiple(results, xlabel, ylabel, title):
     plt.axis('on')
@@ -55,7 +64,7 @@ def plot_multiple(results, xlabel, ylabel, title):
     plt.legend(results.keys(),loc='upper right')
     plt.show()
 
-def plot_multiple_tuples(results, xlabel, ylabel, title):
+def plot_multiple_tuples(results, xlabel, ylabel, title, path=None):
     plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
@@ -66,5 +75,9 @@ def plot_multiple_tuples(results, xlabel, ylabel, title):
     plt.title(title)
     plt.legend(results.keys(),loc='upper right')
     plt.xlim(xmin=1)
-    plt.show()
-    return plt
+    plt.tight_layout()
+    if path != None:
+        plt.savefig(path)
+    else:
+        plt.show()
+    plt.clf()
