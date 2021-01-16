@@ -22,6 +22,7 @@ def plot_decision_boundary(X, y, model):
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     plt.show()
+    return plt
 
 def plot_iter_cost(model):
     plt.axis('on')

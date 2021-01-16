@@ -118,9 +118,10 @@ for i, d in enumerate(datasets):
     print(f"Rows: {d[0]}, Features: {d[1]}")
     for j, m in enumerate(methods):
         clf = LogisticRegression(method=m).fit(X_train, y_train)
-        print(f"Method: {m}, Rows: {d[0]}, Features: {d[1]}, Accuracy: " + str(accuracy_score(y_test, clf.predict(X_test))))
+        print(f"Method: {m}, Rows: {d[0]}, Features: {d[1]}, Accuracy: " + str(accuracy_score(y_test, clf.predict(X_test))) + ", Time: " + str(clf.times[-1][1]))
         if(i == 0 and j==0):
-            plot_decision_boundary(X_test, y_test, clf)
+            decision_boundary_plot = plot_decision_boundary(X_test, y_test, clf)
+            decision_boundary_plot.savefig(f'charts/decision_boundary.svg')
         results[clf.method] = clf.iterationsCosts
         resultsTime[clf.method] = clf.times
 
