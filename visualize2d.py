@@ -44,4 +44,24 @@ def plot_iter_cost_multiple(results):
     plt.legend(results.keys())
     plt.show()
     return plt
-    
+
+def plot_multiple(results, xlabel, ylabel, title):
+    plt.axis('on')
+    for key, value in results.items():
+        plt.plot(value)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend(results.keys())
+    plt.show()
+
+def plot_multiple_tuples(results, xlabel, ylabel, title):
+    plt.axis('on')
+    for key, value in results.items():
+        plt.plot(*zip(*value))
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend(results.keys())
+    plt.xlim(xmin=1)
+    plt.show()
