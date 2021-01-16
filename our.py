@@ -9,7 +9,7 @@ from scipy.optimize import minimize
 import matplotlib.pyplot as plt
 import time
 
-RANDOM_STATE = 123
+RANDOM_STATE = 12
 np.random.seed(RANDOM_STATE)
 
 start_time = 0.0
@@ -22,7 +22,7 @@ def time_convert(sec):
     print("Czas {0}:{1}:{2}".format(int(hours),int(mins),sec))
 
 class LogisticRegression(object):
-    def __init__(self, learning_rate=0.01, max_iter=10000, regularization='l2', C = 1, tolerance = 1e-9, method="SGD", options=None):
+    def __init__(self, learning_rate=0.01, max_iter=50000, regularization='l2', C = 1, tolerance = 1e-12, method="SGD", options=None):
         self.learning_rate  = learning_rate
         self.max_iter = max_iter
         self.regularization = regularization
@@ -37,24 +37,24 @@ class LogisticRegression(object):
         self.times = []
 
     def fit(self, X, y):
+        global start_time
         self.theta = np.random.rand(X.shape[1])
         self.currentX = X
         self.currentY = y
 
         m = X.shape[1]
 
-        last_time = time.perf_counter()
+        start_time = time.perf_counter()
         if self.method == "SGD":
             self.theta = self.SGD(X, y)
         else:
             res = minimize(fun=self.cost_function, x0=self.theta, args=(X, y), method=self.method, jac=self.gradient, options=self.options, callback=self.callback)
             self.theta = res.x
-            #print(res.x)
-            #print(res.message)
         
         return self
 
     def callback(self, xk):
+        global start_time
         currentTime = time.perf_counter()
         elapsedTime = currentTime - start_time
         self.times.append((len(self.times)+1, currentTime - start_time))
@@ -76,6 +76,8 @@ class LogisticRegression(object):
     def cost_function(self, theta, X, y):
         m = X.shape[1]
         hx = self.h(X @ theta)
+        hx[hx==0]=1e-10
+        hx[hx==1]=1-1e-10
         
         res = 1 / m * np.sum(-y * np.log(hx) - (1-y) * np.log(1-hx)) + self.lam/(2*m)*np.sum(theta**2)
         return res
@@ -105,13 +107,15 @@ def get_dataset(n_samples,n_features,SEED):
 # %%
 from sklearn.datasets import make_classification
 
-datasets = [(1000, 2), (1000, 500), (2000, 500)]
+datasets = [(1000, 2), (500, 1000), (1000, 500), (8000, 5000)]
 methods  = [ "SGD", "CG", "L-BFGS-B"]#"nelder-mead"
 
 for i, d in enumerate(datasets):
     X_train, X_test, y_train, y_test = get_dataset(d[0], d[1], RANDOM_STATE)
     results = {}
     resultsTime = {}
+    print(f"\n")
+    print(f"Rows: {d[0]}, Features: {d[1]}")
     for j, m in enumerate(methods):
         clf = LogisticRegression(method=m).fit(X_train, y_train)
         print(f"Method: {m}, Rows: {d[0]}, Features: {d[1]}, Accuracy: " + str(accuracy_score(y_test, clf.predict(X_test))))
@@ -122,7 +126,5 @@ for i, d in enumerate(datasets):
 
     iter_cost_plt = plot_iter_cost_multiple(results)
     iter_cost_plt.savefig(f'charts/iter_cost_rows_{d[0]}_features_{d[1]}.svg')
-    plot_multiple_tuples(resultsTime, "Liczba iteracji", "Czas", "Czas/Liczba iteracji")
-
-# %%
-#plot_iter_cost(clf_our)
+    iter_time_plt = plot_multiple_tuples(resultsTime, "Liczba iteracji", "Czas", "Czas/Liczba iteracji")
+    iter_time_plt.savefig(f'charts/iter_time_rows_{d[0]}_features_{d[1]}.svg')

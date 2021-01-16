@@ -40,7 +40,7 @@ def plot_iter_cost_multiple(results):
     plt.ylabel("Wartość funkcji kosztu")
     plt.yscale("log")
     plt.xscale("log")
-    plt.title("Porównanie")
+    plt.title("Koszt/Liczba iteracji")
     plt.legend(results.keys())
     plt.show()
     return plt
@@ -52,16 +52,19 @@ def plot_multiple(results, xlabel, ylabel, title):
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
-    plt.legend(results.keys())
+    plt.legend(results.keys(),loc='upper right')
     plt.show()
 
 def plot_multiple_tuples(results, xlabel, ylabel, title):
+    plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
         plt.plot(*zip(*value))
     plt.xlabel(xlabel)
+    plt.xscale("log")
     plt.ylabel(ylabel)
     plt.title(title)
-    plt.legend(results.keys())
+    plt.legend(results.keys(),loc='upper right')
     plt.xlim(xmin=1)
     plt.show()
+    return plt
