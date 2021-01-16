@@ -110,8 +110,6 @@ def get_dataset(n_samples,n_features,SEED):
     n_redundant = 0
     if n_features > 2:
         n_informative = int(n_features*0.8)
-        #n_repeated = int(n_features*0.01)
-        #n_redundant = int(n_features*0.05)
         
     X, y = make_classification(n_samples=n_samples, n_features=n_features, n_informative=n_informative, n_redundant=n_redundant, n_repeated=n_repeated, n_classes=2,n_clusters_per_class=1,class_sep=0.7,random_state=SEED)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=SEED)

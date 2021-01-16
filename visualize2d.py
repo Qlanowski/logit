@@ -28,6 +28,7 @@ def plot_decision_boundary(X, y, model,path=None):
         plt.show()
     plt.clf()
 
+
 def plot_iter_cost(model):
     plt.axis('on')
     plt.plot(model.iterationsCosts)
