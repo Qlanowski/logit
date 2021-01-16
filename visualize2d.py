@@ -32,6 +32,7 @@ def plot_iter_cost(model):
     plt.show()
 
 def plot_iter_cost_multiple(results):
+    plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
         plt.plot(value)
@@ -40,4 +41,7 @@ def plot_iter_cost_multiple(results):
     plt.yscale("log")
     plt.xscale("log")
     plt.title("Porównanie")
+    plt.legend(results.keys())
     plt.show()
+    return plt
+    
