@@ -29,24 +29,14 @@ def plot_decision_boundary(X, y, model,path=None):
     plt.clf()
 
 
-def plot_iter_cost(model):
-    plt.axis('on')
-    plt.plot(model.iterationsCosts)
-    plt.xlabel("Liczba iteracji")
-    plt.ylabel("Wartość funkcji kosztu")
-    plt.title(model.method)
-    plt.show()
-
-def plot_iter_cost_multiple(results, path=None):
+def plot_iter_cost_multiple(results, xlabel, ylabel, title, path=None):
     plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
         plt.plot(value)
-    plt.xlabel("Liczba iteracji")
-    plt.ylabel("Wartość funkcji kosztu")
-    plt.yscale("log")
-    plt.xscale("log")
-    plt.title("Koszt/Liczba iteracji")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
     plt.legend(results.keys())
     plt.tight_layout()
     if path != None:
@@ -55,26 +45,34 @@ def plot_iter_cost_multiple(results, path=None):
         plt.show()
     plt.clf()
 
-def plot_multiple(results, xlabel, ylabel, title):
-    plt.axis('on')
-    for key, value in results.items():
-        plt.plot(value)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.title(title)
-    plt.legend(results.keys(),loc='upper right')
-    plt.show()
-
 def plot_multiple_tuples(results, xlabel, ylabel, title, path=None):
     plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
         plt.plot(*zip(*value))
     plt.xlabel(xlabel)
-    plt.xscale("log")
     plt.ylabel(ylabel)
     plt.title(title)
     plt.legend(results.keys(),loc='upper right')
+    plt.xlim(xmin=1)
+    plt.tight_layout()
+    if path != None:
+        plt.savefig(path)
+    else:
+        plt.show()
+    plt.clf()
+
+def plot_time_cost_tuples(times, costs, xlabel, ylabel, title, path=None):
+    plt.style.use('ggplot')
+    plt.axis('on')
+    for key, value in times.items():
+        cost = costs[key]
+        time = [v[1]*1000 for v in value]
+        plt.plot(time, cost)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend(times.keys(),loc='upper right')
     plt.xlim(xmin=1)
     plt.tight_layout()
     if path != None:
