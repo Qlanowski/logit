@@ -49,7 +49,8 @@ def plot_multiple_tuples(results, xlabel, ylabel, title, path=None):
     plt.style.use('ggplot')
     plt.axis('on')
     for key, value in results.items():
-        plt.plot(*zip(*value))
+        time = [v[1]*1000 for v in value]
+        plt.plot(time)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
